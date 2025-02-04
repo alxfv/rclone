@@ -2301,8 +2301,8 @@ If empty it will default to the environment variable "AWS_PROFILE" or
 			Advanced:  true,
 			Sensitive: true,
 		}, {
-			Name:      "key_prefix",
-			Help:      "Key Prefix",
+			Name:      "list_key_prefix",
+			Help:      "List Key Prefix",
 			Advanced:  true,
 			Sensitive: true,
 		}, {
@@ -2882,7 +2882,7 @@ type Options struct {
 	LeavePartsOnError     bool                 `config:"leave_parts_on_error"`
 	ListChunk             int32                `config:"list_chunk"`
 	ListVersion           int                  `config:"list_version"`
-	KeyPrefix             string               `config:"key_prefix"`
+	ListKeyPrefix         string               `config:"list_key_prefix"`
 	ListURLEncode         fs.Tristate          `config:"list_url_encode"`
 	NoCheckBucket         bool                 `config:"no_check_bucket"`
 	NoHead                bool                 `config:"no_head"`
@@ -4220,7 +4220,7 @@ func (f *Fs) list(ctx context.Context, opt listOpt, fn listFn) error {
 	// So we enable only on providers we know supports it properly, all others can retry when a
 	// XML Syntax error is detected.
 	urlEncodeListings := f.opt.ListURLEncode.Value
-	prefix := opt.directory + f.opt.KeyPrefix
+	prefix := opt.directory + f.opt.ListKeyPrefix
 	req := s3.ListObjectsV2Input{
 		Bucket:    &opt.bucket,
 		Delimiter: &delimiter,
