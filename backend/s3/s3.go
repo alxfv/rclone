@@ -2301,6 +2301,11 @@ If empty it will default to the environment variable "AWS_PROFILE" or
 			Advanced:  true,
 			Sensitive: true,
 		}, {
+			Name:      "list_key_prefix",
+			Help:      "List Key Prefix",
+			Advanced:  true,
+			Sensitive: true,
+		}, {
 			Name: "upload_concurrency",
 			Help: `Concurrency for multipart uploads and copies.
 
@@ -2877,6 +2882,7 @@ type Options struct {
 	LeavePartsOnError     bool                 `config:"leave_parts_on_error"`
 	ListChunk             int32                `config:"list_chunk"`
 	ListVersion           int                  `config:"list_version"`
+	ListKeyPrefix         string               `config:"list_key_prefix"`
 	ListURLEncode         fs.Tristate          `config:"list_url_encode"`
 	NoCheckBucket         bool                 `config:"no_check_bucket"`
 	NoHead                bool                 `config:"no_head"`
@@ -4214,10 +4220,11 @@ func (f *Fs) list(ctx context.Context, opt listOpt, fn listFn) error {
 	// So we enable only on providers we know supports it properly, all others can retry when a
 	// XML Syntax error is detected.
 	urlEncodeListings := f.opt.ListURLEncode.Value
+	prefix := opt.directory + f.opt.ListKeyPrefix
 	req := s3.ListObjectsV2Input{
 		Bucket:    &opt.bucket,
 		Delimiter: &delimiter,
-		Prefix:    &opt.directory,
+		Prefix:    &prefix,
 		MaxKeys:   &f.opt.ListChunk,
 	}
 	if opt.restoreStatus {
